@@ -2,68 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
-
-const dummyData = [
-  {
-    id: 1,
-    particulars: 'Apple Inc.',
-    purchasePrice: 145.50,
-    quantity: 100,
-    investment: 14550,
-    portfolioPercent: 25.8,
-    exchange: 'NSE',
-    cmp: 150.25,
-    presentValue: 15025,
-    gainLoss: 475,
-    peRatio: 24.5,
-    latestEarnings: '6.15B'
-  },
-  {
-    id: 2,
-    particulars: 'Alphabet Inc.',
-    purchasePrice: 2800.00,
-    quantity: 5,
-    investment: 14000,
-    portfolioPercent: 24.8,
-    exchange: 'BSE',
-    cmp: 2750.80,
-    presentValue: 13754,
-    gainLoss: -246,
-    peRatio: 22.8,
-    latestEarnings: '13.9B'
-  },
-  {
-    id: 3,
-    particulars: 'Microsoft Corp.',
-    purchasePrice: 295.00,
-    quantity: 50,
-    investment: 14750,
-    portfolioPercent: 26.1,
-    exchange: 'NSE',
-    cmp: 305.15,
-    presentValue: 15257.50,
-    gainLoss: 507.50,
-    peRatio: 28.2,
-    latestEarnings: '11.05B'
-  },
-  {
-    id: 4,
-    particulars: 'Reliance Industries',
-    purchasePrice: 2450.00,
-    quantity: 25,
-    investment: 61250,
-    portfolioPercent: 23.3,
-    exchange: 'BSE',
-    cmp: 2520.30,
-    presentValue: 63007.50,
-    gainLoss: 1757.50,
-    peRatio: 15.6,
-    latestEarnings: '₹15,138 Cr'
-  }
-];
+import { getPortfolio } from '../../lib/api';
 
 export default function PortfolioTable() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const columns = [
     {
@@ -150,20 +94,42 @@ export default function PortfolioTable() {
     },
   ];
 
-  useEffect(() => {
-    setData(dummyData);
-  }, []);
-
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const portfolioData = await getPortfolio();
+        setData(portfolioData);
+      } catch (err) {
+        setError('Failed to load portfolio data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <span className="ml-2">Loading portfolio data...</span>
+      </div>
+    );
+  }
+
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-4">Portfolio Table</h2>
+      
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
           <thead className="bg-gray-50">

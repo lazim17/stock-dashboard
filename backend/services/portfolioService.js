@@ -1,0 +1,67 @@
+const holdings = [
+  {
+    id: 1,
+    particulars: 'HDFC Bank',
+    purchasePrice: 1490,
+    quantity: 50,
+    investment: 74500,
+    portfolioPercent: 25,
+    exchange: 'NSE',
+    cmp: 0,
+    presentValue: 0,
+    gainLoss: 0,
+    peRatio: 0,
+    latestEarnings: ''
+  },
+  {
+    id: 2,
+    particulars: 'Bajaj Finance',
+    purchasePrice: 6466,
+    quantity: 15,
+    investment: 96990,
+    portfolioPercent: 30,
+    exchange: 'NSE',
+    cmp: 0,
+    presentValue: 0,
+    gainLoss: 0,
+    peRatio: 0,
+    latestEarnings: ''
+  },
+  {
+    id: 3,
+    particulars: 'ICICI Bank',
+    purchasePrice: 780,
+    quantity: 84,
+    investment: 65520,
+    portfolioPercent: 20,
+    exchange: 'BSE',
+    cmp: 0,
+    presentValue: 0,
+    gainLoss: 0,
+    peRatio: 0,
+    latestEarnings: ''
+  },
+  {
+    id: 4,
+    particulars: 'Dmart',
+    purchasePrice: 3777,
+    quantity: 27,
+    investment: 101979,
+    portfolioPercent: 25,
+    exchange: 'NSE',
+    cmp: 0,
+    presentValue: 0,
+    gainLoss: 0,
+    peRatio: 0,
+    latestEarnings: ''
+  }
+];
+
+class PortfolioService {
+  async getAllHoldings() {
+    return holdings;
+  }
+
+}
+
+module.exports = new PortfolioService();
