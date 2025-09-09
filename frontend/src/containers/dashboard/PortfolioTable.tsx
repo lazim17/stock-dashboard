@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
-import { getPortfolio } from '../../lib/api';
+import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
+import { getPortfolio, PortfolioItem } from '../../lib/api';
 
 export default function PortfolioTable() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState<PortfolioItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const columns = [
+  const columns: ColumnDef<PortfolioItem>[] = [
     {
       accessorKey: 'particulars',
       header: 'Particulars (Stock Name)',
@@ -18,7 +17,7 @@ export default function PortfolioTable() {
       accessorKey: 'purchasePrice',
       header: 'Purchase Price',
       cell: ({ getValue }) => {
-        const price = getValue();
+        const price = getValue() as number;
         return typeof price === 'number' ? `₹${price.toFixed(2)}` : price;
       },
     },
@@ -30,7 +29,7 @@ export default function PortfolioTable() {
       accessorKey: 'investment',
       header: 'Investment',
       cell: ({ getValue }) => {
-        const investment = getValue();
+        const investment = getValue() as number;
         return typeof investment === 'number' ? `₹${investment.toLocaleString('en-IN')}` : investment;
       },
     },
@@ -38,7 +37,7 @@ export default function PortfolioTable() {
       accessorKey: 'portfolioPercent',
       header: 'Portfolio (%)',
       cell: ({ getValue }) => {
-        const percent = getValue();
+        const percent = getValue() as number;
         return typeof percent === 'number' ? `${percent.toFixed(1)}%` : percent;
       },
     },
@@ -46,7 +45,7 @@ export default function PortfolioTable() {
       accessorKey: 'exchange',
       header: 'NSE/BSE',
       cell: ({ getValue }) => {
-        const exchange = getValue();
+        const exchange = getValue() as string;
         const colorClass = exchange === 'NSE' ? 'text-blue-600' : 'text-orange-600';
         return <span className={`font-medium ${colorClass}`}>{exchange}</span>;
       },
@@ -55,7 +54,7 @@ export default function PortfolioTable() {
       accessorKey: 'cmp',
       header: 'CMP',
       cell: ({ getValue }) => {
-        const cmp = getValue();
+        const cmp = getValue() as number;
         return typeof cmp === 'number' ? `₹${cmp.toFixed(2)}` : cmp;
       },
     },
@@ -63,7 +62,7 @@ export default function PortfolioTable() {
       accessorKey: 'presentValue',
       header: 'Present Value',
       cell: ({ getValue }) => {
-        const presentValue = getValue();
+        const presentValue = getValue() as number;
         return typeof presentValue === 'number' ? `₹${presentValue.toLocaleString('en-IN')}` : presentValue;
       },
     },
@@ -71,7 +70,7 @@ export default function PortfolioTable() {
       accessorKey: 'gainLoss',
       header: 'Gain/Loss',
       cell: ({ getValue }) => {
-        const gainLoss = getValue();
+        const gainLoss = getValue() as number;
         if (typeof gainLoss === 'number') {
           const color = gainLoss >= 0 ? 'text-green-600' : 'text-red-600';
           const sign = gainLoss >= 0 ? '+' : '';
@@ -84,7 +83,7 @@ export default function PortfolioTable() {
       accessorKey: 'peRatio',
       header: 'P/E Ratio',
       cell: ({ getValue }) => {
-        const peRatio = getValue();
+        const peRatio = getValue() as number;
         return typeof peRatio === 'number' ? peRatio.toFixed(1) : peRatio;
       },
     },
@@ -107,7 +106,7 @@ export default function PortfolioTable() {
         const portfolioData = await getPortfolio();
         setData(portfolioData);
       } catch (err) {
-        setError('Failed to load portfolio data');
+        console.error('Failed to load portfolio data:', err);
       } finally {
         setLoading(false);
       }
