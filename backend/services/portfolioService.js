@@ -1,67 +1,5 @@
 const externalDataService = require('./externalDataService');
-
-const holdings = [
-  {
-    id: 1,
-    particulars: 'HDFC Bank',
-    symbol: 'HDFCBANK.NS',
-    purchasePrice: 1490,
-    quantity: 50,
-    investment: 74500,
-    portfolioPercent: 25,
-    exchange: 'NSE',
-    cmp: 0,
-    presentValue: 0,
-    gainLoss: 0,
-    peRatio: 0,
-    latestEarnings: ''
-  },
-  {
-    id: 2,
-    particulars: 'Bajaj Finance',
-    symbol: 'BAJFINANCE.NS',
-    purchasePrice: 6466,
-    quantity: 15,
-    investment: 96990,
-    portfolioPercent: 30,
-    exchange: 'NSE',
-    cmp: 0,
-    presentValue: 0,
-    gainLoss: 0,
-    peRatio: 0,
-    latestEarnings: ''
-  },
-  {
-    id: 3,
-    particulars: 'ICICI Bank',
-    symbol: 'ICICIBANK.NS',
-    purchasePrice: 780,
-    quantity: 84,
-    investment: 65520,
-    portfolioPercent: 20,
-    exchange: 'BSE',
-    cmp: 0,
-    presentValue: 0,
-    gainLoss: 0,
-    peRatio: 0,
-    latestEarnings: ''
-  },
-  {
-    id: 4,
-    particulars: 'Dmart',
-    symbol: 'DMART.NS',
-    purchasePrice: 3777,
-    quantity: 27,
-    investment: 101979,
-    portfolioPercent: 25,
-    exchange: 'NSE',
-    cmp: 0,
-    presentValue: 0,
-    gainLoss: 0,
-    peRatio: 0,
-    latestEarnings: ''
-  }
-];
+const holdings = require('../data/holdings.json');
 
 class PortfolioService {
   async getAllHoldings() {
@@ -87,7 +25,8 @@ class PortfolioService {
           dayHigh: stock?.dayHigh || 0,
           dayLow: stock?.dayLow || 0,
           change: stock?.change || 0,
-          changePercent: Math.round((stock?.changePercent || 0) * 100) / 100
+          changePercent: Math.round((stock?.changePercent || 0) * 100) / 100,
+          latestEarnings: stock?.epsTrailing12Months || 0,
         };
       });
       
@@ -104,21 +43,13 @@ class PortfolioService {
         dayHigh: 0,
         dayLow: 0,
         change: 0,
-        changePercent: 0
+        changePercent: 0,
+        currentEPS: 0,
+        latestEarnings: '₹0'
       }));
     }
   }
 
-  async fetchCMPData() {
-    try {
-      const symbols = holdings.map(holding => holding.symbol);
-      const stockData = await externalDataService.getYahooFinanceData(symbols);      
-      return stockData;
-    } catch (error) {
-      console.error('Error fetching CMP data:', error);
-      throw error;
-    }
-  }
 
 }
 

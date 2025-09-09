@@ -111,10 +111,6 @@ public
 logs
 *.log
 
-# Data files (optional - remove if you want to commit data files)
-data/*.csv
-data/*.xlsx
-data/*.json
 
 # IDE files
 .vscode/
