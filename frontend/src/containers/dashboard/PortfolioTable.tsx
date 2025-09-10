@@ -8,6 +8,10 @@ export default function PortfolioTable() {
   const [data, setData] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const totalInvestment = data.reduce((sum, item) => sum + item.investment, 0);
+  const totalPresentValue = data.reduce((sum, item) => sum + item.presentValue, 0);
+  const totalGainLoss = totalPresentValue - totalInvestment;
+
   const columns: ColumnDef<PortfolioItem>[] = [
     {
       accessorKey: 'particulars',
@@ -35,7 +39,7 @@ export default function PortfolioTable() {
     },
     {
       accessorKey: 'portfolioPercent',
-      header: 'Portfolio (%)',
+      header: '(%)',
       cell: ({ getValue }) => {
         const percent = getValue() as number;
         return typeof percent === 'number' ? `${percent.toFixed(1)}%` : percent;
@@ -128,54 +132,76 @@ export default function PortfolioTable() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center h-96">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         <span className="ml-2">Loading portfolio data...</span>
       </div>
     );
   }
 
-
   return (
-    <div className="w-full">
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
-          <thead className="bg-gray-50">
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
+    <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Portfolio Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="text-sm font-medium text-gray-500">Total Investment</div>
+            <div className="text-2xl font-bold text-gray-900">₹{totalInvestment.toLocaleString('en-IN')}</div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="text-sm font-medium text-gray-500">Present Value</div>
+            <div className="text-2xl font-bold text-gray-900">₹{totalPresentValue.toLocaleString('en-IN')}</div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="text-sm font-medium text-gray-500">Total Gain/Loss</div>
+            <div className={`text-2xl font-bold ${totalGainLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {totalGainLoss >= 0 ? '+' : ''}₹{totalGainLoss.toLocaleString('en-IN')}
+            </div>
+          </div>
+        </div>
+
+        {/* Portfolio Table */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-medium text-gray-900">Portfolio Holdings</h2>
+          </div>
+          <div className="overflow-auto max-h-120">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-10">
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <th
+                        key={header.id}
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id} className="hover:bg-gray-50">
-                {row.getVisibleCells().map(cell => (
-                  <td
-                    key={cell.id}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {table.getRowModel().rows.map(row => (
+                  <tr key={row.id} className="hover:bg-gray-50">
+                    {row.getVisibleCells().map(cell => (
+                      <td
+                        key={cell.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
   );
 }
