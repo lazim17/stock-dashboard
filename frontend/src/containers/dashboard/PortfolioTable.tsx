@@ -51,6 +51,10 @@ export default function PortfolioTable() {
       },
     },
     {
+      accessorKey: 'sector',
+      header: 'Sector',
+    },
+    {
       accessorKey: 'cmp',
       header: 'CMP',
       cell: ({ getValue }) => {

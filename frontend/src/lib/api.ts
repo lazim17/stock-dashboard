@@ -7,6 +7,7 @@ export interface PortfolioItem {
   investment: number;
   portfolioPercent: number;
   exchange: 'NSE' | 'BSE';
+  sector: string;
   cmp: number;
   presentValue: number;
   gainLoss: number;
