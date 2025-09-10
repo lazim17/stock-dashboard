@@ -113,6 +113,12 @@ export default function PortfolioTable() {
     };
 
     fetchData();
+    
+    const interval = setInterval(() => {
+      fetchData();
+    }, 15000);
+
+    return () => clearInterval(interval);
   }, []);
 
 

@@ -1,11 +1,21 @@
 const externalDataService = require('./externalDataService');
+const dataCacheService = require('./dataCacheService');
 const holdings = require('../data/holdings.json');
 
 class PortfolioService {
   async getAllHoldings() {
     try {
-      const symbols = holdings.map(holding => holding.symbol);
-      const stockYahooData = await externalDataService.getYahooFinanceData(symbols); 
+      const cached = await dataCacheService.getCachedStockData();
+      let stockYahooData;
+
+      if (cached.data && !cached.isStale) {
+        stockYahooData = cached.data;
+        console.log('using cached stock data');
+      } else {
+        console.log('fetching fresh data');
+        const symbols = holdings.map(holding => holding.symbol);
+        stockYahooData = await externalDataService.getYahooFinanceData(symbols);
+      }
       
       const updatedHoldings = holdings.map(holding => {
         const stock = stockYahooData.find(s => s.symbol === holding.symbol);
@@ -27,6 +37,7 @@ class PortfolioService {
           change: stock?.change || 0,
           changePercent: Math.round((stock?.changePercent || 0) * 100) / 100,
           latestEarnings: stock?.epsTrailing12Months || 0,
+          lastUpdated: cached.lastUpdated
         };
       });
       
