@@ -8,11 +8,9 @@ class RedisService {
 
   async connect() {
     try {
-      const clientConfig = {
-        host: process.env.REDISHOST || 'localhost',
-        port: 6379,
-        password: process.env.REDISPASSWORD || undefined
-      };
+      const clientConfig = process.env.REDIS_URL 
+        ? { url: process.env.REDISURL }
+        : { host: 'localhost', port: 6379 };
 
       this.client = redis.createClient({
         ...clientConfig,

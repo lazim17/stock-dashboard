@@ -1,7 +1,6 @@
 console.log('Environment loading check:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('REDISHOST:', process.env.REDISHOST);
-console.log('REDISPASSWORD:', process.env.REDISPASSWORD);
+console.log('REDIS_URL:', process.env.REDISURL);
 
 const express = require('express');
 const cors = require('cors');
