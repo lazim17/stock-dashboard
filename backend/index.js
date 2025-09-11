@@ -1,4 +1,3 @@
-require('dotenv').config();
 console.log('Environment loading check:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('REDISHOST:', process.env.REDISHOST);
