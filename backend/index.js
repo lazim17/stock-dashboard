@@ -1,9 +1,8 @@
 require('dotenv').config();
 console.log('Environment loading check:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('REDIS_HOST:', process.env.REDIS_HOST || 'undefined');
-console.log('REDIS_PORT:', process.env.REDIS_PORT || 'undefined');
-console.log('REDIS_PASSWORD:', process.env.REDIS_PASSWORD ? 'SET' : 'undefined');
+console.log('REDISHOST:', process.env.REDISHOST);
+console.log('REDISPASSWORD:', process.env.REDISPASSWORD);
 
 const express = require('express');
 const cors = require('cors');
