@@ -1,15 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
 import { getPortfolio, PortfolioItem } from '../../lib/api';
 
 export default function PortfolioTable() {
   const [data, setData] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedSector, setSelectedSector] = useState<string>('all');
 
-  const totalInvestment = data.reduce((sum, item) => sum + item.investment, 0);
-  const totalPresentValue = data.reduce((sum, item) => sum + item.presentValue, 0);
+  const filteredData = useMemo(() => {
+    if (selectedSector === 'all') {
+      return data;
+    }
+    const filtered = data.filter(item => {
+      return item.sector === selectedSector;
+    });
+    return filtered;
+  }, [data, selectedSector]);
+
+  const uniqueSectors = useMemo(() => {
+    const sectors = Array.from(new Set(data.map(item => item.sector))).sort();
+    return sectors;
+  }, [data]);
+
+  const totalInvestment = filteredData.reduce((sum, item) => sum + item.investment, 0);
+  const totalPresentValue = filteredData.reduce((sum, item) => sum + item.presentValue, 0);
   const totalGainLoss = totalPresentValue - totalInvestment;
 
   const columns: ColumnDef<PortfolioItem>[] = [
@@ -102,7 +118,7 @@ export default function PortfolioTable() {
   ];
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -162,7 +178,27 @@ export default function PortfolioTable() {
         {/* Portfolio Table */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">Portfolio Holdings</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-medium text-gray-900">Portfolio Holdings</h2>
+              <div className="flex items-center space-x-2">
+                <label htmlFor="sector-filter" className="text-sm font-medium text-gray-700">
+                  Filter by Sector:
+                </label>
+                <select
+                  id="sector-filter"
+                  value={selectedSector}
+                  onChange={(e) => setSelectedSector(e.target.value)}
+                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Sectors</option>
+                  {uniqueSectors.map((sector) => (
+                    <option key={sector} value={sector}>
+                      {sector}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
           <div className="overflow-auto max-h-120">
             <table className="min-w-full divide-y divide-gray-200">
