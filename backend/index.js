@@ -1,4 +1,10 @@
 require('dotenv').config();
+console.log('Environment loading check:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('REDIS_HOST:', process.env.REDIS_HOST);
+console.log('REDIS_PORT:', process.env.REDIS_PORT);
+console.log('REDIS_PASSWORD:', process.env.REDIS_PASSWORD ? '***' : 'undefined');
+
 const express = require('express');
 const cors = require('cors');
 const portfolioRoutes = require('./routes/portfolio');
