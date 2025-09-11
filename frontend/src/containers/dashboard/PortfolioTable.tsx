@@ -124,22 +124,38 @@ export default function PortfolioTable() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (isInitialLoad = false) => {
       try {
-        setLoading(true);
+        if (isInitialLoad) {
+          setLoading(true);
+        }
         const portfolioData = await getPortfolio();
-        setData(portfolioData);
+        
+        setData(prevData => {
+          if (!isInitialLoad && prevData.length > 0) {
+            return portfolioData.map((newItem, index) => {
+              const existingItem = prevData[index];
+              if (existingItem && existingItem.particulars === newItem.particulars) {
+                return { ...existingItem, ...newItem };
+              }
+              return newItem;
+            });
+          }
+          return portfolioData;
+        });
       } catch (err) {
         console.error('Failed to load portfolio data:', err);
       } finally {
-        setLoading(false);
+        if (isInitialLoad) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchData();
+    fetchData(true);
     
     const interval = setInterval(() => {
-      fetchData();
+      fetchData(false);
     }, 15000);
 
     return () => clearInterval(interval);
