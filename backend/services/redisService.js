@@ -8,6 +8,9 @@ class RedisService {
 
   async connect() {
     try {
+
+      console.log(process.env.REDIS_PORT)
+      console.log(process.env.REDIS_PASSWORD)
       const clientConfig = {
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT) || 6379,
